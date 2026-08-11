@@ -32,6 +32,8 @@ public:
 
 private:
 	Ui::MainWindow *ui;
+
+	void ProcessFile(bool decompress);
 };
 
 #endif // MAINWINDOW_H

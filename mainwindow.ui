@@ -113,7 +113,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="comboBox_Format">
         <item>
          <property name="text">
           <string>Kosinski</string>

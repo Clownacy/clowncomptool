@@ -16,8 +16,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <filesystem>
+#include <fstream>
+
 #include <QFileDialog>
 #include <QMessageBox>
+
+#include "mdcomp/kosinski.hh"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -34,18 +39,20 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
 		[this]()
 		{
-			QString input_filename = QFileDialog::getOpenFileName(this, "Select Input File");
+			const QString input_filename = QFileDialog::getOpenFileName(this, "Select Input File");
 
-			ui->lineEdit_Input->setText(input_filename);
+			if (!input_filename.isEmpty())
+				ui->lineEdit_Input->setText(input_filename);
 		}
 	);
 
 	connect(ui->pushButton_OutputBrowse, &QPushButton::clicked, this,
 		[this]()
 		{
-			QString output_filename = QFileDialog::getSaveFileName(this, "Select Output File");
+			const QString output_filename = QFileDialog::getSaveFileName(this, "Select Output File");
 
-			ui->lineEdit_Output->setText(output_filename);
+			if (!output_filename.isEmpty())
+				ui->lineEdit_Output->setText(output_filename);
 		}
 	);
 
@@ -65,9 +72,73 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(ui->lineEdit_Input, &QLineEdit::textChanged, this, UpdateButtons);
 	connect(ui->lineEdit_Output, &QLineEdit::textChanged, this, UpdateButtons);
+
+	connect(ui->pushButton_Compress, &QPushButton::clicked, this,
+		[this]()
+		{
+			ProcessFile(false);
+		}
+	);
+
+	connect(ui->pushButton_Decompress, &QPushButton::clicked, this,
+		[this]()
+		{
+			ProcessFile(true);
+		}
+	);
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
+}
+
+void MainWindow::ProcessFile(const bool decompress)
+{
+	const auto &Attempt = [&]()
+	{
+		try
+		{
+			const auto &PathFromQString = [](const QString &string)
+			{
+				const auto &utf8_string = string.toUtf8();
+				return std::filesystem::path(std::u8string_view(reinterpret_cast<const char8_t*>(utf8_string.data()), utf8_string.size()));
+			};
+
+			std::ifstream input_stream(PathFromQString(ui->lineEdit_Input->text()), std::ios::binary);
+			std::fstream output_stream(PathFromQString(ui->lineEdit_Output->text()), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+
+			const QString &format = ui->comboBox_Format->currentText();
+			const bool moduled = ui->checkBox_Moduled->isChecked();
+			const auto module_size = ui->spinBox_ModuleSize->value();
+
+			if (format == "Kosinski")
+			{
+				if (moduled)
+				{
+					if (decompress)
+						return kosinski::moduled_decode(input_stream, output_stream, module_size);
+					else
+						return kosinski::moduled_encode(input_stream, output_stream, module_size);
+				}
+				else
+				{
+					if (decompress)
+						return kosinski::decode(input_stream, output_stream);
+					else
+						return kosinski::encode(input_stream, output_stream);
+				}
+			}
+		}
+		catch (...)
+		{
+		}
+
+		return false;
+	};
+
+	if (Attempt())
+		QMessageBox::information(this, ui->centralwidget->windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
+	else
+		QMessageBox::warning(this, ui->centralwidget->windowTitle(), decompress ? "Could not decompress file." : "Could not compress file.");
 }
