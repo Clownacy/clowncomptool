@@ -63,4 +63,4 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 add_subdirectory("FW-KENSC-ShellExt" EXCLUDE_FROM_ALL)
-target_link_libraries(clowncomptool PRIVATE FW-KENSC-ShellExt-Compressors)
+target_link_libraries(clowncomptool PRIVATE FW-KENSC-ShellExt-MDComp)
