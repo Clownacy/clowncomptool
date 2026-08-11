@@ -19,8 +19,10 @@
 #include <filesystem>
 #include <fstream>
 
+#include <QDropEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMimeData>
 
 #include "mdcomp/comper.hh"
 #include "mdcomp/comperx.hh"
@@ -232,6 +234,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
+	setAcceptDrops(true);
+
 	// Disable parts of the interface by default
 	ui->spinBox_ModuleSize->setEnabled(false);
 	ui->pushButton_Compress->setEnabled(false);
@@ -282,6 +286,27 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
 	delete ui;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	const QMimeData* mimeData = event->mimeData();
+
+	if (mimeData->hasUrls() && mimeData->urls().size() == 1)
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent* event)
+{
+	const QMimeData* mimeData = event->mimeData();
+
+	if (mimeData->hasUrls())
+	{
+		const auto &urls = mimeData->urls();
+
+		if (urls.size() == 1)
+			ui->lineEdit_Input->setText(urls.front().path());
+	}
 }
 
 void MainWindow::ProcessFile(const bool decompress)
