@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Clownacy's MDComp Tool</string>
+   <string>Clownacy's Compression Tool</string>
   </property>
   <property name="animated">
    <bool>true</bool>

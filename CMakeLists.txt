@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(clownmdcomptool VERSION 1.0 LANGUAGES CXX)
+project(clowncomptool VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -34,33 +34,33 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(clownmdcomptool
+    qt_add_executable(clowncomptool
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 else()
     if(ANDROID)
-        add_library(clownmdcomptool SHARED
+        add_library(clowncomptool SHARED
             ${PROJECT_SOURCES}
         )
     else()
-        add_executable(clownmdcomptool WIN32
+        add_executable(clowncomptool WIN32
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(clownmdcomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(clowncomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set_target_properties(clownmdcomptool PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER clownmdcomptool.clownacy.com
+set_target_properties(clowncomptool PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER clowncomptool.clownacy.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(clownmdcomptool)
+    qt_finalize_executable(clowncomptool)
 endif()
 
 add_subdirectory("FW-KENSC-ShellExt" EXCLUDE_FROM_ALL)
-target_link_libraries(clownmdcomptool PRIVATE FW-KENSC-ShellExt-Compressors)
+target_link_libraries(clowncomptool PRIVATE FW-KENSC-ShellExt-Compressors)
