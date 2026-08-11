@@ -33,12 +33,59 @@
 #include "mdcomp/rocket.hh"
 #include "mdcomp/saxman.hh"
 
-struct Format
+
+class Worker : public QObject
 {
-	const char *name, *extension_normal, *extension_moduled;
-	std::function<bool(std::istream&, std::iostream&)> compress, decompress;
-	std::function<bool(std::istream&, std::iostream&, std::size_t)> compress_moduled, decompress_moduled;
+	Q_OBJECT
+
+public slots:
+	void processFile(const Format* const format, const bool decompress, const std::filesystem::path input_file_path, const std::filesystem::path output_file_path, const bool moduled, const std::size_t module_size)
+	{
+		const auto &Attempt = [&]()
+		{
+			try
+			{
+				std::ifstream input_stream(input_file_path, std::ios::binary);
+
+				if (!input_stream.is_open())
+					return false;
+
+				std::fstream output_stream(output_file_path, std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+
+				if (!output_stream.is_open())
+					return false;
+
+				if (moduled)
+				{
+					if (decompress)
+						return format->decompress_moduled(input_stream, output_stream, module_size);
+					else
+						return format->compress_moduled(input_stream, output_stream, module_size);
+				}
+				else
+				{
+					if (decompress)
+						return format->decompress(input_stream, output_stream);
+					else
+						return format->compress(input_stream, output_stream);
+				}
+
+				return false;
+			}
+			catch (...)
+			{
+				return false;
+			}
+		};
+
+		emit processingComplete(Attempt(), decompress);
+	}
+
+signals:
+	void processingComplete(bool result, bool decompress);
 };
+
+#include "mainwindow.moc"
 
 static const Format formats[] = {
 	{
@@ -236,6 +283,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setAcceptDrops(true);
 
+	Worker *worker = new Worker;
+	worker->moveToThread(&worker_thread);
+	connect(&worker_thread, &QThread::finished, worker, &QObject::deleteLater);
+	connect(this, &MainWindow::processFile, worker, &Worker::processFile);
+	connect(worker, &Worker::processingComplete, this, &MainWindow::processingComplete);
+	worker_thread.start();
+
 	// Disable parts of the interface by default
 	ui->spinBox_ModuleSize->setEnabled(false);
 	ui->pushButton_Compress->setEnabled(false);
@@ -271,20 +325,23 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->pushButton_Compress, &QPushButton::clicked, this,
 		[this]()
 		{
-			ProcessFile(false);
+			beginProcessingFile(false);
 		}
 	);
 
 	connect(ui->pushButton_Decompress, &QPushButton::clicked, this,
 		[this]()
 		{
-			ProcessFile(true);
+			beginProcessingFile(true);
 		}
 	);
 }
 
 MainWindow::~MainWindow()
 {
+	worker_thread.quit();
+	worker_thread.wait();
+
 	delete ui;
 }
 
@@ -309,7 +366,7 @@ void MainWindow::dropEvent(QDropEvent* event)
 	}
 }
 
-void MainWindow::ProcessFile(const bool decompress)
+void MainWindow::beginProcessingFile(const bool decompress)
 {
 	const auto &FindFormat = [&]() -> const Format*
 	{
@@ -347,47 +404,21 @@ void MainWindow::ProcessFile(const bool decompress)
 	if (output_filename.isEmpty())
 		return;
 
-	// TODO: Run this on another thread to avoid freezing the UI.
-	const auto &Attempt = [&]()
-	{
-		try
-		{
-			std::ifstream input_stream(PathFromQString(ui->lineEdit_Input->text()), std::ios::binary);
+	const auto module_size = ui->spinBox_ModuleSize->value();
 
-			if (!input_stream.is_open())
-				return false;
+	emit processFile(
+		format,
+		decompress,
+		PathFromQString(ui->lineEdit_Input->text()),
+		PathFromQString(output_filename),
+		moduled,
+		module_size
+	);
+}
 
-			std::fstream output_stream(PathFromQString(output_filename), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
-
-			if (!output_stream.is_open())
-				return false;
-
-			const auto module_size = ui->spinBox_ModuleSize->value();
-
-			if (moduled)
-			{
-				if (decompress)
-					return format->decompress_moduled(input_stream, output_stream, module_size);
-				else
-					return format->compress_moduled(input_stream, output_stream, module_size);
-			}
-			else
-			{
-				if (decompress)
-					return format->decompress(input_stream, output_stream);
-				else
-					return format->compress(input_stream, output_stream);
-			}
-
-			return false;
-		}
-		catch (...)
-		{
-			return false;
-		}
-	};
-
-	if (Attempt())
+void MainWindow::processingComplete(const bool success, const bool decompress)
+{
+	if (success)
 		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
 	else
 		QMessageBox::warning(this, windowTitle(), decompress ? "Could not decompress file." : "Could not compress file.");
