@@ -97,6 +97,11 @@
         </item>
         <item>
          <property name="text">
+          <string>Saxman (No Header)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Comper</string>
          </property>
         </item>

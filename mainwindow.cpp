@@ -104,11 +104,36 @@ static const Format formats[] = {
 		"sax", "saxm",
 		[](auto &input, auto &output)
 		{
-			return saxman::encode(input, output, true); // TODO: Do something about the header!
+			return saxman::encode(input, output, true);
 		},
 		[](auto &input, auto &output)
 		{
 			return saxman::decode(input, output);
+		},
+		[](auto &input, auto &output, auto module_size)
+		{
+			return saxman::moduled_encode(input, output, module_size);
+		},
+		[](auto &input, auto &output, auto module_size)
+		{
+			return saxman::moduled_decode(input, output, module_size);
+		}
+	},
+	{
+		"Saxman (No Header)",
+		"sax", "saxm",
+		[](auto &input, auto &output)
+		{
+			return saxman::encode(input, output, false);
+		},
+		[](auto &input, auto &output)
+		{
+			// Must determine size manually.
+			input.seekg(0, std::ios::end);
+			const auto size = input.tellg();
+			input.seekg(0);
+
+			return saxman::decode(input, output, size);
 		},
 		[](auto &input, auto &output, auto module_size)
 		{
