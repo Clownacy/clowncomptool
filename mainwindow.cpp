@@ -353,7 +353,14 @@ void MainWindow::ProcessFile(const bool decompress)
 		try
 		{
 			std::ifstream input_stream(PathFromQString(ui->lineEdit_Input->text()), std::ios::binary);
+
+			if (!input_stream.is_open())
+				return false;
+
 			std::fstream output_stream(PathFromQString(output_filename), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+
+			if (!output_stream.is_open())
+				return false;
 
 			const auto module_size = ui->spinBox_ModuleSize->value();
 
@@ -371,12 +378,13 @@ void MainWindow::ProcessFile(const bool decompress)
 				else
 					return format->compress(input_stream, output_stream);
 			}
+
+			return false;
 		}
 		catch (...)
 		{
+			return false;
 		}
-
-		return false;
 	};
 
 	if (Attempt())
