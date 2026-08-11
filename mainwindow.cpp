@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
 		[this]()
 		{
-			const QString input_filename = QFileDialog::getOpenFileName(this, "Select Input File");
+			const QString input_filename = QFileDialog::getOpenFileName(this);
 
 			if (!input_filename.isEmpty())
 				ui->lineEdit_Input->setText(input_filename);
@@ -84,11 +84,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::ProcessFile(const bool decompress)
 {
-	const QString output_filename = QFileDialog::getSaveFileName(this, "Select Output File");
+	const QString output_filename = QFileDialog::getSaveFileName(this);
 
 	if (output_filename.isEmpty())
 		return;
 
+	// TODO: Run this on another thread to avoid freezing the UI.
 	const auto &Attempt = [&]()
 	{
 		try
@@ -132,7 +133,7 @@ void MainWindow::ProcessFile(const bool decompress)
 	};
 
 	if (Attempt())
-		QMessageBox::information(this, ui->centralwidget->windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
+		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
 	else
-		QMessageBox::warning(this, ui->centralwidget->windowTitle(), decompress ? "Could not decompress file." : "Could not compress file.");
+		QMessageBox::warning(this, windowTitle(), decompress ? "Could not decompress file." : "Could not compress file.");
 }
