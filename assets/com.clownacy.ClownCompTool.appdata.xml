@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.clownacy.ClownCompTool</id>
+
+  <name>ClownCompTool</name>
+  <summary>Compressor frontend</summary>
+
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>AGPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      A Qt frontend for Flamewing's MDComp library.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">com.clownacy.ClownCompTool.desktop</launchable>
+</component>

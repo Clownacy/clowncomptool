@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Exec=ClownCompTool
+Terminal=false
+Type=Application
+Categories=Utility;Development;Compression;Qt;
+Name=ClownCompTool
+GenericName=Compressor Frontend

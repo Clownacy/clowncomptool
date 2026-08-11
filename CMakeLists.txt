@@ -64,3 +64,11 @@ endif()
 
 add_subdirectory("FW-KENSC-ShellExt" EXCLUDE_FROM_ALL)
 target_link_libraries(clowncomptool PRIVATE FW-KENSC-ShellExt-MDComp)
+
+################
+# Installation #
+################
+
+install(TARGETS clowncomptool DESTINATION "bin")
+install(FILES "assets/com.clownacy.ClownCompTool.appdata.xml" DESTINATION "share/metainfo")
+install(FILES "assets/com.clownacy.ClownCompTool.desktop" DESTINATION "share/applications")
