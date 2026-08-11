@@ -46,16 +46,6 @@ MainWindow::MainWindow(QWidget *parent)
 		}
 	);
 
-	connect(ui->pushButton_OutputBrowse, &QPushButton::clicked, this,
-		[this]()
-		{
-			const QString output_filename = QFileDialog::getSaveFileName(this, "Select Output File");
-
-			if (!output_filename.isEmpty())
-				ui->lineEdit_Output->setText(output_filename);
-		}
-	);
-
 	connect(ui->checkBox_Moduled, &QCheckBox::stateChanged, this,
 		[this](int state)
 		{
@@ -63,15 +53,14 @@ MainWindow::MainWindow(QWidget *parent)
 		}
 	);
 
-	const auto &UpdateButtons = [this]()
-	{
-		const bool enabled = !ui->lineEdit_Input->text().isEmpty() && !ui->lineEdit_Output->text().isEmpty();
-		ui->pushButton_Compress->setEnabled(enabled);
-		ui->pushButton_Decompress->setEnabled(enabled);
-	};
-
-	connect(ui->lineEdit_Input, &QLineEdit::textChanged, this, UpdateButtons);
-	connect(ui->lineEdit_Output, &QLineEdit::textChanged, this, UpdateButtons);
+	connect(ui->lineEdit_Input, &QLineEdit::textChanged, this,
+		[this](const QString &string)
+		{
+			const bool enabled = !string.isEmpty();
+			ui->pushButton_Compress->setEnabled(enabled);
+			ui->pushButton_Decompress->setEnabled(enabled);
+		}
+	);
 
 	connect(ui->pushButton_Compress, &QPushButton::clicked, this,
 		[this]()
@@ -95,6 +84,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::ProcessFile(const bool decompress)
 {
+	const QString output_filename = QFileDialog::getSaveFileName(this, "Select Output File");
+
+	if (output_filename.isEmpty())
+		return;
+
 	const auto &Attempt = [&]()
 	{
 		try
@@ -106,7 +100,7 @@ void MainWindow::ProcessFile(const bool decompress)
 			};
 
 			std::ifstream input_stream(PathFromQString(ui->lineEdit_Input->text()), std::ios::binary);
-			std::fstream output_stream(PathFromQString(ui->lineEdit_Output->text()), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+			std::fstream output_stream(PathFromQString(output_filename), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
 
 			const QString &format = ui->comboBox_Format->currentText();
 			const bool moduled = ui->checkBox_Moduled->isChecked();
