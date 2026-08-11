@@ -283,6 +283,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setAcceptDrops(true);
 
+	// Set-up the worker thread.
 	Worker *worker = new Worker;
 	worker->moveToThread(&worker_thread);
 	connect(&worker_thread, &QThread::finished, worker, &QObject::deleteLater);
@@ -406,6 +407,9 @@ void MainWindow::beginProcessingFile(const bool decompress)
 
 	const auto module_size = ui->spinBox_ModuleSize->value();
 
+	// Disable the UI to give the user at least some idea that something is happening in the background.
+	ui->centralwidget->setEnabled(false);
+
 	emit processFile(
 		format,
 		decompress,
@@ -418,6 +422,9 @@ void MainWindow::beginProcessingFile(const bool decompress)
 
 void MainWindow::processingComplete(const bool success, const bool decompress)
 {
+	// Let the user use the interface again.
+	ui->centralwidget->setEnabled(true);
+
 	if (success)
 		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
 	else
