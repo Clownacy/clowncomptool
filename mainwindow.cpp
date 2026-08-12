@@ -33,24 +33,35 @@
 #include "mdcomp/rocket.hh"
 #include "mdcomp/saxman.hh"
 
+static std::filesystem::path PathFromQString(const QString &string)
+{
+	const auto &utf8_string = string.toUtf8();
+	return std::u8string_view(reinterpret_cast<const char8_t*>(utf8_string.data()), utf8_string.size());
+};
+
+static QString QStringFromPath(const std::filesystem::path &path)
+{
+	const auto &utf8_string = path.u8string();
+	return QString::fromUtf8(reinterpret_cast<const char*>(utf8_string.data()), utf8_string.size());
+};
 
 class Worker : public QObject
 {
 	Q_OBJECT
 
 public slots:
-	void processFile(const Format* const format, const bool decompress, const std::filesystem::path input_file_path, const std::filesystem::path output_file_path, const bool moduled, const std::size_t module_size)
+	void processFile(const Format* const format, const bool decompress, const QString input_file_path, const QString output_file_path, const bool moduled, const int module_size)
 	{
 		const auto &Attempt = [&]()
 		{
 			try
 			{
-				std::ifstream input_stream(input_file_path, std::ios::binary);
+				std::ifstream input_stream(PathFromQString(input_file_path), std::ios::binary);
 
 				if (!input_stream.is_open())
 					return false;
 
-				std::fstream output_stream(output_file_path, std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+				std::fstream output_stream(PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
 
 				if (!output_stream.is_open())
 					return false;
@@ -384,18 +395,6 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	if (format == nullptr)
 		return;
 
-	const auto &PathFromQString = [](const QString &string)
-	{
-		const auto &utf8_string = string.toUtf8();
-		return std::filesystem::path(std::u8string_view(reinterpret_cast<const char8_t*>(utf8_string.data()), utf8_string.size()));
-	};
-
-	const auto &QStringFromPath = [](const std::filesystem::path &path)
-	{
-		const auto &utf8_string = path.u8string();
-		return QString::fromUtf8(reinterpret_cast<const char*>(utf8_string.data()), utf8_string.size());
-	};
-
 	const bool moduled = ui->checkBox_Moduled->isChecked();
 	const auto extension = decompress ? "unc" : moduled ? format->extension_moduled : format->extension_normal;
 
@@ -413,8 +412,8 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	emit processFile(
 		format,
 		decompress,
-		PathFromQString(ui->lineEdit_Input->text()),
-		PathFromQString(output_filename),
+		ui->lineEdit_Input->text(),
+		output_filename,
 		moduled,
 		module_size
 	);

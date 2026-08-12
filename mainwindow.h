@@ -17,7 +17,6 @@
 #define MAINWINDOW_H
 
 #include <iostream>
-#include <filesystem>
 #include <functional>
 
 #include <QMainWindow>
@@ -55,7 +54,7 @@ private slots:
 	void processingComplete(bool success, bool decompress);
 
 signals:
-	void processFile(const Format *format, bool decompress, std::filesystem::path input_file_path, std::filesystem::path output_file_path, bool moduled, std::size_t module_size);
+	void processFile(const Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled, int module_size);
 };
 
 #endif // MAINWINDOW_H
