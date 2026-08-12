@@ -374,7 +374,7 @@ void MainWindow::dropEvent(QDropEvent* event)
 		const auto &urls = mimeData->urls();
 
 		if (urls.size() == 1)
-			ui->lineEdit_Input->setText(urls.front().path());
+			ui->lineEdit_Input->setText(urls.front().toString(QUrl::PreferLocalFile));
 	}
 }
 
