@@ -305,6 +305,7 @@ MainWindow::MainWindow(QWidget *parent)
 	// Disable parts of the interface by default
 	ui->pushButton_Compress->setEnabled(false);
 	ui->pushButton_Decompress->setEnabled(false);
+	ui->progressBar->setMaximum(1);
 
 	// Wire-up signals and slots.
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
@@ -398,6 +399,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 
 	// Disable the UI to give the user at least some idea that something is happening in the background.
 	ui->centralwidget->setEnabled(false);
+	ui->progressBar->setMaximum(0);
 
 	emit processFile(
 		format,
@@ -412,6 +414,7 @@ void MainWindow::processingComplete(const bool success, const bool decompress)
 {
 	// Let the user use the interface again.
 	ui->centralwidget->setEnabled(true);
+	ui->progressBar->setMaximum(1);
 
 	if (success)
 		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
