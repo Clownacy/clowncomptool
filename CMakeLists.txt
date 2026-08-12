@@ -29,6 +29,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(PROJECT_SOURCES
 	"assets/ClownCompTool.rc"
+        "icon.qrc"
         "main.cpp"
         "mainwindow.cpp" "mainwindow.h"
         "mainwindow.ui"

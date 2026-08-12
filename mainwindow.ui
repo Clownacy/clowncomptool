@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Clownacy's Compression Tool</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icon.qrc">
+    <normaloff>:/Icon/assets/icon/icon-master.png</normaloff>:/Icon/assets/icon/icon-master.png</iconset>
+  </property>
   <property name="animated">
    <bool>true</bool>
   </property>
@@ -205,6 +209,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
  <connections/>
 </ui>
