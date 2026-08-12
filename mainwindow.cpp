@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QSettings>
 
 #include "mdcomp/comper.hh"
 #include "mdcomp/comperx.hh"
@@ -302,10 +303,16 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(worker, &Worker::processingComplete, this, &MainWindow::processingComplete);
 	worker_thread.start();
 
-	// Disable parts of the interface by default
+	// Disable parts of the interface by default.
 	ui->pushButton_Compress->setEnabled(false);
 	ui->pushButton_Decompress->setEnabled(false);
 	ui->progressBar->setMaximum(1);
+
+	// Load settings.
+	QSettings settings;
+	ui->lineEdit_Input->setText(settings.value("Path", "").toString());
+	ui->comboBox_Format->setCurrentText(settings.value("Format", "Kosinski").toString());
+	ui->checkBox_Moduled->setChecked(settings.value("Moduled", false).toBool());
 
 	// Wire-up signals and slots.
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
@@ -344,6 +351,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+	// Save settings.
+	QSettings settings;
+	settings.setValue("Path", ui->lineEdit_Input->text());
+	settings.setValue("Format", ui->comboBox_Format->currentText());
+	settings.setValue("Moduled", ui->checkBox_Moduled->isChecked());
+
 	worker_thread.quit();
 	worker_thread.wait();
 
