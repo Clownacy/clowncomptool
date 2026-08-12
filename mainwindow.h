@@ -29,8 +29,7 @@ QT_END_NAMESPACE
 struct Format
 {
 	const char *name, *extension_normal, *extension_moduled;
-	std::function<bool(std::istream&, std::iostream&)> compress, decompress;
-	std::function<bool(std::istream&, std::iostream&, std::size_t)> compress_moduled, decompress_moduled;
+	std::function<bool(std::istream&, std::iostream&)> compress, decompress, compress_moduled, decompress_moduled;
 };
 
 class MainWindow : public QMainWindow
@@ -54,7 +53,7 @@ private slots:
 	void processingComplete(bool success, bool decompress);
 
 signals:
-	void processFile(const Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled, int module_size);
+	void processFile(const Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled);
 };
 
 #endif // MAINWINDOW_H

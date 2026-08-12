@@ -130,34 +130,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBox_ModuleSize">
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
-        </property>
-        <property name="suffix">
-         <string> Bytes Per Module</string>
-        </property>
-        <property name="prefix">
-         <string>0x</string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>65536</number>
-        </property>
-        <property name="singleStep">
-         <number>256</number>
-        </property>
-        <property name="value">
-         <number>4096</number>
-        </property>
-        <property name="displayIntegerBase">
-         <number>16</number>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

@@ -50,7 +50,7 @@ class Worker : public QObject
 	Q_OBJECT
 
 public slots:
-	void processFile(const Format* const format, const bool decompress, const QString input_file_path, const QString output_file_path, const bool moduled, const int module_size)
+	void processFile(const Format* const format, const bool decompress, const QString input_file_path, const QString output_file_path, const bool moduled)
 	{
 		const auto &Attempt = [&]()
 		{
@@ -69,9 +69,9 @@ public slots:
 				if (moduled)
 				{
 					if (decompress)
-						return format->decompress_moduled(input_stream, output_stream, module_size);
+						return format->decompress_moduled(input_stream, output_stream);
 					else
-						return format->compress_moduled(input_stream, output_stream, module_size);
+						return format->compress_moduled(input_stream, output_stream);
 				}
 				else
 				{
@@ -110,13 +110,13 @@ static const Format formats[] = {
 		{
 			return kosinski::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return kosinski::moduled_encode(input, output, module_size);
+			return kosinski::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return kosinski::moduled_decode(input, output, module_size);
+			return kosinski::moduled_decode(input, output);
 		}
 	},
 	{
@@ -130,13 +130,13 @@ static const Format formats[] = {
 		{
 			return enigma::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return enigma::moduled_encode(input, output, module_size);
+			return enigma::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return enigma::moduled_decode(input, output, module_size);
+			return enigma::moduled_decode(input, output);
 		}
 	},
 	{
@@ -150,13 +150,13 @@ static const Format formats[] = {
 		{
 			return nemesis::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return nemesis::moduled_encode(input, output, module_size);
+			return nemesis::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return nemesis::moduled_decode(input, output, module_size);
+			return nemesis::moduled_decode(input, output);
 		}
 	},
 	{
@@ -170,13 +170,13 @@ static const Format formats[] = {
 		{
 			return saxman::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return saxman::moduled_encode(input, output, module_size);
+			return saxman::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return saxman::moduled_decode(input, output, module_size);
+			return saxman::moduled_decode(input, output);
 		}
 	},
 	{
@@ -195,13 +195,13 @@ static const Format formats[] = {
 
 			return saxman::decode(input, output, size);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return saxman::moduled_encode(input, output, module_size);
+			return saxman::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return saxman::moduled_decode(input, output, module_size);
+			return saxman::moduled_decode(input, output);
 		}
 	},
 	{
@@ -215,13 +215,13 @@ static const Format formats[] = {
 		{
 			return comper::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return comper::moduled_encode(input, output, module_size);
+			return comper::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return comper::moduled_decode(input, output, module_size);
+			return comper::moduled_decode(input, output);
 		}
 	},
 	{
@@ -235,13 +235,13 @@ static const Format formats[] = {
 		{
 			return comperx::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return comperx::moduled_encode(input, output, module_size);
+			return comperx::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return comperx::moduled_decode(input, output, module_size);
+			return comperx::moduled_decode(input, output);
 		}
 	},
 	{
@@ -255,13 +255,13 @@ static const Format formats[] = {
 		{
 			return rocket::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return rocket::moduled_encode(input, output, module_size);
+			return rocket::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return rocket::moduled_decode(input, output, module_size);
+			return rocket::moduled_decode(input, output);
 		}
 	},
 	{
@@ -275,13 +275,13 @@ static const Format formats[] = {
 		{
 			return kosplus::decode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return kosplus::moduled_encode(input, output, module_size);
+			return kosplus::moduled_encode(input, output);
 		},
-		[](auto &input, auto &output, auto module_size)
+		[](auto &input, auto &output)
 		{
-			return kosplus::moduled_decode(input, output, module_size);
+			return kosplus::moduled_decode(input, output);
 		}
 	},
 };
@@ -303,7 +303,6 @@ MainWindow::MainWindow(QWidget *parent)
 	worker_thread.start();
 
 	// Disable parts of the interface by default
-	ui->spinBox_ModuleSize->setEnabled(false);
 	ui->pushButton_Compress->setEnabled(false);
 	ui->pushButton_Decompress->setEnabled(false);
 
@@ -315,13 +314,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 			if (!input_filename.isEmpty())
 				ui->lineEdit_Input->setText(input_filename);
-		}
-	);
-
-	connect(ui->checkBox_Moduled, &QCheckBox::stateChanged, this,
-		[this](int state)
-		{
-			ui->spinBox_ModuleSize->setEnabled(state == Qt::CheckState::Checked);
 		}
 	);
 
@@ -404,8 +396,6 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	if (output_filename.isEmpty())
 		return;
 
-	const auto module_size = ui->spinBox_ModuleSize->value();
-
 	// Disable the UI to give the user at least some idea that something is happening in the background.
 	ui->centralwidget->setEnabled(false);
 
@@ -414,8 +404,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 		decompress,
 		ui->lineEdit_Input->text(),
 		output_filename,
-		moduled,
-		module_size
+		moduled
 	);
 }
 
