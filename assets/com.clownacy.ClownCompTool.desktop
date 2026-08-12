@@ -1,5 +1,6 @@
 [Desktop Entry]
 Version=1.0
+Icon=ClownCompTool
 Exec=ClownCompTool
 Terminal=false
 Type=Application
