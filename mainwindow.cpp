@@ -411,7 +411,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 		return;
 
 	// Disable the UI to give the user at least some idea that something is happening in the background.
-	ui->centralwidget->setEnabled(false);
+	ui->controls->setEnabled(false);
 	ui->progressBar->setMaximum(0);
 
 	emit processFile(
@@ -426,7 +426,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 void MainWindow::processingComplete(const bool success, const bool decompress)
 {
 	// Let the user use the interface again.
-	ui->centralwidget->setEnabled(true);
+	ui->controls->setEnabled(true);
 	ui->progressBar->setMaximum(1);
 
 	if (success)
