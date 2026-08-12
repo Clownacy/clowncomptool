@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Icon=ClownCompTool
-Exec=ClownCompTool
+Exec=clowncomptool
 Terminal=false
 Type=Application
 Categories=Utility;Development;Compression;Qt;
