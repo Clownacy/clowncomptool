@@ -308,12 +308,6 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->pushButton_Decompress->setEnabled(false);
 	ui->progressBar->setMaximum(1);
 
-	// Load settings.
-	QSettings settings;
-	ui->lineEdit_Input->setText(settings.value("Path", "").toString());
-	ui->comboBox_Format->setCurrentText(settings.value("Format", "Kosinski").toString());
-	ui->checkBox_Moduled->setChecked(settings.value("Moduled", false).toBool());
-
 	// Wire-up signals and slots.
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
 		[this]()
@@ -347,6 +341,12 @@ MainWindow::MainWindow(QWidget *parent)
 			beginProcessingFile(true);
 		}
 	);
+
+	// Load settings.
+	QSettings settings;
+	ui->lineEdit_Input->setText(settings.value("Path", "").toString());
+	ui->comboBox_Format->setCurrentText(settings.value("Format", "Kosinski").toString());
+	ui->checkBox_Moduled->setChecked(settings.value("Moduled", false).toBool());
 }
 
 MainWindow::~MainWindow()
