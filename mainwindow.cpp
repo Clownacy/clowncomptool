@@ -101,7 +101,15 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+void MainWindow::closeEvent(QCloseEvent* const event)
+{
+	if (!ui->controls->isEnabled() && QMessageBox::question(this, windowTitle(), "An operation is still in progress; are you sure you want to quit?") != QMessageBox::Yes)
+		event->ignore();
+	else
+		event->accept();
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent* const event)
 {
 	const QMimeData* mimeData = event->mimeData();
 
@@ -109,7 +117,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
         event->acceptProposedAction();
 }
 
-void MainWindow::dropEvent(QDropEvent* event)
+void MainWindow::dropEvent(QDropEvent* const event)
 {
 	const QMimeData* mimeData = event->mimeData();
 

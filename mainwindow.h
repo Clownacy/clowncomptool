@@ -34,6 +34,7 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+	void closeEvent(QCloseEvent *event);
 	void dragEnterEvent(QDragEnterEvent *event);
 	void dropEvent(QDropEvent* event);
 
