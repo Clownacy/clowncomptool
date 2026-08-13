@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	// Set some properties which will be useful for saving settings with QSettings.
 	QApplication::setApplicationName("ClownCompTool");
-	QApplication::setApplicationVersion("1.2");
+	QApplication::setApplicationVersion("1.2.1");
 	QApplication::setOrganizationDomain("clownacy.com");
 	QApplication::setOrganizationName("clownacy");
 
