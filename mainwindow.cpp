@@ -132,7 +132,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	const bool moduled = ui->checkBox_Moduled->isChecked();
 	const auto extension = decompress ? "unc" : moduled ? format->extension_moduled : format->extension_normal;
 
-	const QString output_filename_hint = Utilities::QStringFromPath(Utilities::PathFromQString(ui->lineEdit_Input->text()).replace_extension(extension));
+	const QString output_filename_hint = Utilities::ReplaceFileExtension(ui->lineEdit_Input->text(), extension);
 	const QString output_filename = QFileDialog::getSaveFileName(this, {}, output_filename_hint);
 
 	if (output_filename.isEmpty())

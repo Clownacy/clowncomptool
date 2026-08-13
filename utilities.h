@@ -24,6 +24,8 @@ namespace Utilities
 {
 	std::filesystem::path PathFromQString(const QString &string);
 	QString QStringFromPath(const std::filesystem::path &path);
+
+	QString ReplaceFileExtension(const QString &path, const char *extension);
 }
 
 #endif // UTILITIES_H

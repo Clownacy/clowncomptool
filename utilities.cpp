@@ -15,14 +15,23 @@
 
 #include "utilities.h"
 
-std::filesystem::path Utilities::PathFromQString(const QString &string)
+namespace Utilities {
+
+std::filesystem::path PathFromQString(const QString &string)
 {
 	const auto &utf8_string = string.toUtf8();
 	return std::u8string_view(reinterpret_cast<const char8_t*>(utf8_string.data()), utf8_string.size());
 };
 
-QString Utilities::QStringFromPath(const std::filesystem::path &path)
+QString QStringFromPath(const std::filesystem::path &path)
 {
 	const auto &utf8_string = path.u8string();
 	return QString::fromUtf8(reinterpret_cast<const char*>(utf8_string.data()), utf8_string.size());
 };
+
+QString ReplaceFileExtension(const QString &path, const char* const extension)
+{
+	return Utilities::QStringFromPath(Utilities::PathFromQString(path).replace_extension(extension));
+}
+
+}
