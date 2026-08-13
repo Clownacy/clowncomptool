@@ -32,7 +32,7 @@
      <widget class="QWidget" name="controls" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_Controls">
        <property name="spacing">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
