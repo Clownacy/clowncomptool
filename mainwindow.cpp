@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->pushButton_InputBrowse, &QPushButton::clicked, this,
 		[this]()
 		{
-			const QString input_filename = QFileDialog::getOpenFileName(this);
+			const QString input_filename = QFileDialog::getOpenFileName(this, {}, ui->lineEdit_Input->text());
 
 			if (!input_filename.isEmpty())
 				setInputPath(input_filename);
