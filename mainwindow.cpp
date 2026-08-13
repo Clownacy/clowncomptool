@@ -16,7 +16,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include <filesystem>
 #include <fstream>
 
 #include <QDropEvent>
@@ -34,17 +33,7 @@
 #include "mdcomp/rocket.hh"
 #include "mdcomp/saxman.hh"
 
-static std::filesystem::path PathFromQString(const QString &string)
-{
-	const auto &utf8_string = string.toUtf8();
-	return std::u8string_view(reinterpret_cast<const char8_t*>(utf8_string.data()), utf8_string.size());
-};
-
-static QString QStringFromPath(const std::filesystem::path &path)
-{
-	const auto &utf8_string = path.u8string();
-	return QString::fromUtf8(reinterpret_cast<const char*>(utf8_string.data()), utf8_string.size());
-};
+#include "utilities.h"
 
 class Worker : public QObject
 {
@@ -57,12 +46,12 @@ public slots:
 		{
 			try
 			{
-				std::ifstream input_stream(PathFromQString(input_file_path), std::ios::binary);
+				std::ifstream input_stream(Utilities::PathFromQString(input_file_path), std::ios::binary);
 
 				if (!input_stream.is_open())
 					return false;
 
-				std::fstream output_stream(PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+				std::fstream output_stream(Utilities::PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
 
 				if (!output_stream.is_open())
 					return false;
@@ -404,7 +393,7 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	const bool moduled = ui->checkBox_Moduled->isChecked();
 	const auto extension = decompress ? "unc" : moduled ? format->extension_moduled : format->extension_normal;
 
-	const QString output_filename_hint = QStringFromPath(PathFromQString(ui->lineEdit_Input->text()).replace_extension(extension));
+	const QString output_filename_hint = Utilities::QStringFromPath(Utilities::PathFromQString(ui->lineEdit_Input->text()).replace_extension(extension));
 	const QString output_filename = QFileDialog::getSaveFileName(this, {}, output_filename_hint);
 
 	if (output_filename.isEmpty())
