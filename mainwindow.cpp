@@ -95,7 +95,7 @@ MainWindow::~MainWindow()
 	settings.setValue("Format", ui->comboBox_Format->currentText());
 	settings.setValue("Moduled", ui->checkBox_Moduled->isChecked());
 
-	worker_thread.quit();
+	worker_thread.terminate();
 	worker_thread.wait();
 
 	delete ui;
