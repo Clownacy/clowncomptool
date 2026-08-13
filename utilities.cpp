@@ -34,4 +34,9 @@ QString ReplaceFileExtension(const QString &path, const char* const extension)
 	return Utilities::QStringFromPath(Utilities::PathFromQString(path).replace_extension(extension));
 }
 
+QString GetFileExtension(const QString &path)
+{
+	return QStringFromPath(Utilities::PathFromQString(path).extension());
+}
+
 }

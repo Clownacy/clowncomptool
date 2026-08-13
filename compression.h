@@ -41,7 +41,8 @@ namespace Compression
 		void processingComplete(bool result, bool decompress);
 	};
 
-	const Format* FindFormat(const QString &name);
+	const Format* FindFormatFromName(const QString &name);
+	const Format* FindFormatFromExtension(const QString &extension, bool &moduled);
 }
 
 #endif // COMPRESSION_H

@@ -33,7 +33,7 @@ namespace Compression {
 static const Format formats[] = {
 	{
 		"Kosinski",
-		"kos", "kosm",
+		".kos", ".kosm",
 		[](auto &input, auto &output)
 		{
 			return kosinski::encode(input, output);
@@ -53,7 +53,7 @@ static const Format formats[] = {
 	},
 	{
 		"Enigma",
-		"eni", "enim",
+		".eni", ".enim",
 		[](auto &input, auto &output)
 		{
 			return enigma::encode(input, output);
@@ -73,7 +73,7 @@ static const Format formats[] = {
 	},
 	{
 		"Nemesis",
-		"nem", "nemm",
+		".nem", ".nemm",
 		[](auto &input, auto &output)
 		{
 			return nemesis::encode(input, output);
@@ -93,7 +93,7 @@ static const Format formats[] = {
 	},
 	{
 		"Saxman",
-		"sax", "saxm",
+		".sax", ".saxm",
 		[](auto &input, auto &output)
 		{
 			return saxman::encode(input, output, true);
@@ -113,7 +113,7 @@ static const Format formats[] = {
 	},
 	{
 		"Saxman (No Header)",
-		"sax", "saxm",
+		".sax", ".saxm",
 		[](auto &input, auto &output)
 		{
 			return saxman::encode(input, output, false);
@@ -138,7 +138,7 @@ static const Format formats[] = {
 	},
 	{
 		"Comper",
-		"comp", "compm",
+		".comp", ".compm",
 		[](auto &input, auto &output)
 		{
 			return comper::encode(input, output);
@@ -158,7 +158,7 @@ static const Format formats[] = {
 	},
 	{
 		"Comper-X",
-		"compx", "compxm",
+		".compx", ".compxm",
 		[](auto &input, auto &output)
 		{
 			return comperx::encode(input, output);
@@ -178,7 +178,7 @@ static const Format formats[] = {
 	},
 	{
 		"Rocket",
-		"rock", "rockm",
+		".rock", ".rockm",
 		[](auto &input, auto &output)
 		{
 			return rocket::encode(input, output);
@@ -198,7 +198,7 @@ static const Format formats[] = {
 	},
 	{
 		"Kosinski+",
-		"kosp", "kospm",
+		".kosp", ".kospm",
 		[](auto &input, auto &output)
 		{
 			return kosplus::encode(input, output);
@@ -260,14 +260,34 @@ void Worker::processFile(const Format* const format, const bool decompress, cons
 	emit processingComplete(Attempt(), decompress);
 }
 
-const Format* FindFormat(const QString &name)
+const Format* FindFormatFromName(const QString &name)
 {
 	for (const auto &format : formats)
 		if (format.name == name)
 			return &format;
 
-	// TODO: An assert?
 	return nullptr;
 };
+
+const Format* FindFormatFromExtension(const QString &extension, bool &moduled)
+{
+	const QString &extension_lowercase = extension.toLower();
+
+	for (const auto &format : formats)
+	{
+		if (format.extension_normal == extension_lowercase)
+		{
+			moduled = false;
+			return &format;
+		}
+		else if (format.extension_moduled == extension_lowercase)
+		{
+			moduled = true;
+			return &format;
+		}
+	}
+
+	return nullptr;
+}
 
 }

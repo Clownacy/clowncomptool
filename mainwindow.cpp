@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 			const QString input_filename = QFileDialog::getOpenFileName(this);
 
 			if (!input_filename.isEmpty())
-				ui->lineEdit_Input->setText(input_filename);
+				setInputPath(input_filename);
 		}
 	);
 
@@ -118,13 +118,27 @@ void MainWindow::dropEvent(QDropEvent* event)
 		const auto &urls = mimeData->urls();
 
 		if (urls.size() == 1)
-			ui->lineEdit_Input->setText(urls.front().toString(QUrl::PreferLocalFile));
+			setInputPath(urls.front().toString(QUrl::PreferLocalFile));
 	}
+}
+
+void MainWindow::setInputPath(const QString &path)
+{
+	ui->lineEdit_Input->setText(path);
+
+	bool moduled;
+	const Compression::Format* const format = Compression::FindFormatFromExtension(Utilities::GetFileExtension(path), moduled);
+
+	if (format == nullptr)
+		return;
+
+	ui->comboBox_Format->setCurrentText(format->name);
+	ui->checkBox_Moduled->setChecked(moduled);
 }
 
 void MainWindow::beginProcessingFile(const bool decompress)
 {
-	const Compression::Format* const format = Compression::FindFormat(ui->comboBox_Format->currentText());
+	const Compression::Format* const format = Compression::FindFormatFromName(ui->comboBox_Format->currentText());
 
 	if (format == nullptr)
 		return;

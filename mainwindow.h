@@ -41,6 +41,7 @@ private:
 	Ui::MainWindow *ui;
 	QThread worker_thread;
 
+	void setInputPath(const QString &path);
 	void beginProcessingFile(bool decompress);
 
 private slots:
