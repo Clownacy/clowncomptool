@@ -16,21 +16,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <iostream>
-#include <functional>
-
 #include <QMainWindow>
+#include <QString>
 #include <QThread>
+
+#include "compression.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-struct Format
-{
-	const char *name, *extension_normal, *extension_moduled;
-	std::function<bool(std::istream&, std::iostream&)> compress, decompress, compress_moduled, decompress_moduled;
-};
 
 class MainWindow : public QMainWindow
 {
@@ -53,7 +47,7 @@ private slots:
 	void processingComplete(bool success, bool decompress);
 
 signals:
-	void processFile(const Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled);
+	void processFile(const Compression::Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled);
 };
 
 #endif // MAINWINDOW_H

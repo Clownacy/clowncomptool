@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
 	"assets/ClownCompTool.rc"
     "icon.qrc"
     "main.cpp"
+    "compression.cpp" "compression.h"
     "mainwindow.cpp" "mainwindow.h" "mainwindow.ui"
     "utilities.cpp" "utilities.h"
 )

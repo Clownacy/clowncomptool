@@ -16,265 +16,14 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include <fstream>
-
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QSettings>
 
-#include "mdcomp/comper.hh"
-#include "mdcomp/comperx.hh"
-#include "mdcomp/enigma.hh"
-#include "mdcomp/kosinski.hh"
-#include "mdcomp/kosplus.hh"
-#include "mdcomp/nemesis.hh"
-#include "mdcomp/rocket.hh"
-#include "mdcomp/saxman.hh"
-
+#include "compression.h"
 #include "utilities.h"
-
-class Worker : public QObject
-{
-	Q_OBJECT
-
-public slots:
-	void processFile(const Format* const format, const bool decompress, const QString input_file_path, const QString output_file_path, const bool moduled)
-	{
-		const auto &Attempt = [&]()
-		{
-			try
-			{
-				std::ifstream input_stream(Utilities::PathFromQString(input_file_path), std::ios::binary);
-
-				if (!input_stream.is_open())
-					return false;
-
-				std::fstream output_stream(Utilities::PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
-
-				if (!output_stream.is_open())
-					return false;
-
-				if (moduled)
-				{
-					if (decompress)
-						return format->decompress_moduled(input_stream, output_stream);
-					else
-						return format->compress_moduled(input_stream, output_stream);
-				}
-				else
-				{
-					if (decompress)
-						return format->decompress(input_stream, output_stream);
-					else
-						return format->compress(input_stream, output_stream);
-				}
-
-				return false;
-			}
-			catch (...)
-			{
-				return false;
-			}
-		};
-
-		emit processingComplete(Attempt(), decompress);
-	}
-
-signals:
-	void processingComplete(bool result, bool decompress);
-};
-
-#include "mainwindow.moc"
-
-static const Format formats[] = {
-	{
-		"Kosinski",
-		"kos", "kosm",
-		[](auto &input, auto &output)
-		{
-			return kosinski::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosinski::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosinski::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosinski::moduled_decode(input, output);
-		}
-	},
-	{
-		"Enigma",
-		"eni", "enim",
-		[](auto &input, auto &output)
-		{
-			return enigma::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return enigma::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return enigma::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return enigma::moduled_decode(input, output);
-		}
-	},
-	{
-		"Nemesis",
-		"nem", "nemm",
-		[](auto &input, auto &output)
-		{
-			return nemesis::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return nemesis::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return nemesis::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return nemesis::moduled_decode(input, output);
-		}
-	},
-	{
-		"Saxman",
-		"sax", "saxm",
-		[](auto &input, auto &output)
-		{
-			return saxman::encode(input, output, true);
-		},
-		[](auto &input, auto &output)
-		{
-			return saxman::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return saxman::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return saxman::moduled_decode(input, output);
-		}
-	},
-	{
-		"Saxman (No Header)",
-		"sax", "saxm",
-		[](auto &input, auto &output)
-		{
-			return saxman::encode(input, output, false);
-		},
-		[](auto &input, auto &output)
-		{
-			// Must determine size manually.
-			input.seekg(0, std::ios::end);
-			const auto size = input.tellg();
-			input.seekg(0);
-
-			return saxman::decode(input, output, size);
-		},
-		[](auto &input, auto &output)
-		{
-			return saxman::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return saxman::moduled_decode(input, output);
-		}
-	},
-	{
-		"Comper",
-		"comp", "compm",
-		[](auto &input, auto &output)
-		{
-			return comper::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comper::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comper::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comper::moduled_decode(input, output);
-		}
-	},
-	{
-		"Comper-X",
-		"compx", "compxm",
-		[](auto &input, auto &output)
-		{
-			return comperx::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comperx::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comperx::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return comperx::moduled_decode(input, output);
-		}
-	},
-	{
-		"Rocket",
-		"rock", "rockm",
-		[](auto &input, auto &output)
-		{
-			return rocket::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return rocket::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return rocket::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return rocket::moduled_decode(input, output);
-		}
-	},
-	{
-		"Kosinski+",
-		"kosp", "kospm",
-		[](auto &input, auto &output)
-		{
-			return kosplus::encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosplus::decode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosplus::moduled_encode(input, output);
-		},
-		[](auto &input, auto &output)
-		{
-			return kosplus::moduled_decode(input, output);
-		}
-	},
-};
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -285,11 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
 	setAcceptDrops(true);
 
 	// Set-up the worker thread.
-	Worker *worker = new Worker;
+	Compression::Worker *worker = new Compression::Worker;
 	worker->moveToThread(&worker_thread);
 	connect(&worker_thread, &QThread::finished, worker, &QObject::deleteLater);
-	connect(this, &MainWindow::processFile, worker, &Worker::processFile);
-	connect(worker, &Worker::processingComplete, this, &MainWindow::processingComplete);
+	connect(this, &MainWindow::processFile, worker, &Compression::Worker::processFile);
+	connect(worker, &Compression::Worker::processingComplete, this, &MainWindow::processingComplete);
 	worker_thread.start();
 
 	// Disable parts of the interface by default.
@@ -375,17 +124,7 @@ void MainWindow::dropEvent(QDropEvent* event)
 
 void MainWindow::beginProcessingFile(const bool decompress)
 {
-	const auto &FindFormat = [&]() -> const Format*
-	{
-		for (const auto &format : formats)
-			if (format.name == ui->comboBox_Format->currentText())
-				return &format;
-
-		// TODO: An assert?
-		return nullptr;
-	};
-
-	const auto &format = FindFormat();
+	const Compression::Format* const format = Compression::FindFormat(ui->comboBox_Format->currentText());
 
 	if (format == nullptr)
 		return;
