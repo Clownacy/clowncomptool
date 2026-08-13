@@ -220,41 +220,48 @@ static const Format formats[] = {
 
 void Worker::processFile(const Format* const format, const bool decompress, const QString input_file_path, const QString output_file_path, const bool moduled)
 {
-	const auto &Attempt = [&]()
+	const auto &Attempt = [&]() -> const char*
 	{
+		std::ifstream input_stream(Utilities::PathFromQString(input_file_path), std::ios::binary);
+
+		if (!input_stream.is_open())
+			return "Input file could not be opened for reading.";
+
+		std::fstream output_stream(Utilities::PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
+
+		if (!output_stream.is_open())
+			return "Output file Could not be opened for writing.";
+
 		try
 		{
-			std::ifstream input_stream(Utilities::PathFromQString(input_file_path), std::ios::binary);
-
-			if (!input_stream.is_open())
-				return false;
-
-			std::fstream output_stream(Utilities::PathFromQString(output_file_path), std::ios::binary | std::ios::trunc | std::ios::in | std::ios::out);
-
-			if (!output_stream.is_open())
-				return false;
-
-			if (moduled)
+			const auto &RunCompressor = [&]()
 			{
-				if (decompress)
-					return format->decompress_moduled(input_stream, output_stream);
+				if (moduled)
+				{
+					if (decompress)
+						return format->decompress_moduled(input_stream, output_stream);
+					else
+						return format->compress_moduled(input_stream, output_stream);
+				}
 				else
-					return format->compress_moduled(input_stream, output_stream);
-			}
-			else
-			{
-				if (decompress)
-					return format->decompress(input_stream, output_stream);
-				else
-					return format->compress(input_stream, output_stream);
-			}
+				{
+					if (decompress)
+						return format->decompress(input_stream, output_stream);
+					else
+						return format->compress(input_stream, output_stream);
+				}
+			};
 
-			return false;
+			if (RunCompressor())
+			{
+				// Success!
+				return nullptr;
+			}
 		}
 		catch (...)
-		{
-			return false;
-		}
+		{}
+
+		return decompress ? "Decompression failed." : "Compression failed.";
 	};
 
 	emit processingComplete(Attempt(), decompress);

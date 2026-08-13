@@ -165,14 +165,14 @@ void MainWindow::beginProcessingFile(const bool decompress)
 	);
 }
 
-void MainWindow::processingComplete(const bool success, const bool decompress)
+void MainWindow::processingComplete(const char* const error_message, const bool decompress)
 {
 	// Let the user use the interface again.
 	ui->controls->setEnabled(true);
 	ui->progressBar->setMaximum(1);
 
-	if (success)
-		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
+	if (error_message != nullptr)
+		QMessageBox::warning(this, windowTitle(), (decompress ? QStringLiteral("Could not decompress file.\n\n") : QStringLiteral("Could not compress file.\n\n")) + error_message);
 	else
-		QMessageBox::warning(this, windowTitle(), decompress ? "Could not decompress file." : "Could not compress file.");
+		QMessageBox::information(this, windowTitle(), decompress ? "File decompressed successfully." : "File compressed successfully.");
 }

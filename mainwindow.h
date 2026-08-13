@@ -45,7 +45,7 @@ private:
 	void beginProcessingFile(bool decompress);
 
 private slots:
-	void processingComplete(bool success, bool decompress);
+	void processingComplete(const char *error_message, bool decompress);
 
 signals:
 	void processFile(const Compression::Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled);

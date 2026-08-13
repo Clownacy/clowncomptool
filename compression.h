@@ -38,7 +38,7 @@ namespace Compression
 		void processFile(const Format *format, bool decompress, QString input_file_path, QString output_file_path, bool moduled);
 
 	signals:
-		void processingComplete(bool result, bool decompress);
+		void processingComplete(const char* error_message, bool decompress);
 	};
 
 	const Format* FindFormatFromName(const QString &name);
