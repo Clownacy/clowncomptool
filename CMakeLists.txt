@@ -55,6 +55,13 @@ endif()
 
 target_link_libraries(clowncomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+if(WIN32 AND USE_STATIC_QT_BY_DEFAULT)
+    target_link_libraries(clowncomptool PRIVATE
+        Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin
+        Qt${QT_VERSION_MAJOR}::QWindowsVistaStylePlugin
+    )
+endif()
+
 set_target_properties(clowncomptool PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER clowncomptool.clownacy.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
