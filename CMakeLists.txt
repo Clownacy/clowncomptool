@@ -16,12 +16,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # They need to be set before the find_package( ...) calls below.
 
 #if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
+#	set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+#	if (ANDROID_ABI STREQUAL "armeabi-v7a")
+#		set(ANDROID_EXTRA_LIBS
+#			${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
+#			${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
+#	endif()
 #endif()
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Svg REQUIRED)
@@ -29,47 +29,47 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Svg REQUIRED)
 
 set(PROJECT_SOURCES
 	"assets/ClownCompTool.rc"
-    "icon.qrc"
-    "main.cpp"
-    "compression.cpp" "compression.h"
-    "mainwindow.cpp" "mainwindow.h" "mainwindow.ui"
-    "utilities.cpp" "utilities.h"
+	"icon.qrc"
+	"main.cpp"
+	"compression.cpp" "compression.h"
+	"mainwindow.cpp" "mainwindow.h" "mainwindow.ui"
+	"utilities.cpp" "utilities.h"
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(clowncomptool
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
+	qt_add_executable(clowncomptool
+		MANUAL_FINALIZATION
+		${PROJECT_SOURCES}
+	)
 else()
-    if(ANDROID)
-        add_library(clowncomptool SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(clowncomptool WIN32
-            ${PROJECT_SOURCES}
-        )
-    endif()
+	if(ANDROID)
+		add_library(clowncomptool SHARED
+			${PROJECT_SOURCES}
+		)
+	else()
+		add_executable(clowncomptool WIN32
+			${PROJECT_SOURCES}
+		)
+	endif()
 endif()
 
 target_link_libraries(clowncomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg)
 
 if(WIN32 AND USE_STATIC_QT_BY_DEFAULT)
-    target_link_libraries(clowncomptool PRIVATE
-        Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin
-        Qt${QT_VERSION_MAJOR}::QWindowsVistaStylePlugin
-    )
+	target_link_libraries(clowncomptool PRIVATE
+		Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin
+		Qt${QT_VERSION_MAJOR}::QWindowsVistaStylePlugin
+	)
 endif()
 
 set_target_properties(clowncomptool PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER clowncomptool.clownacy.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	MACOSX_BUNDLE_GUI_IDENTIFIER clowncomptool.clownacy.com
+	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(clowncomptool)
+	qt_finalize_executable(clowncomptool)
 endif()
 
 add_subdirectory("FW-KENSC-ShellExt" EXCLUDE_FROM_ALL)
