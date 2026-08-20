@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="/assets/logo.svg" width="256"/>
+  <img src="/assets/logo.svg" width="128"/>
   <br/>
   ClownCompTool
 </h1>
