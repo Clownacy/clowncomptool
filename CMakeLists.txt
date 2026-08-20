@@ -24,8 +24,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Svg REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Svg REQUIRED)
 
 set(PROJECT_SOURCES
 	"assets/ClownCompTool.rc"
@@ -53,7 +53,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(clowncomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(clowncomptool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg)
 
 if(WIN32 AND USE_STATIC_QT_BY_DEFAULT)
     target_link_libraries(clowncomptool PRIVATE
