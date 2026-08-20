@@ -1,1 +1,1 @@
-magick convert ../icon.svg -define icon:auto-resize icon.ico
+magick convert ../logo.svg -define icon:auto-resize icon.ico
