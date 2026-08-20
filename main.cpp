@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
 	QApplication::setOrganizationDomain("clownacy.com");
 	QApplication::setOrganizationName("clownacy");
 
+	// Set global application icon, so that every window and dialogue will show it.
+	QApplication::setWindowIcon(QIcon(":/Icon/assets/logo.svg"));
+
 	QApplication a(argc, argv);
 	MainWindow w;
 	w.show();
